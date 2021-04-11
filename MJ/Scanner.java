@@ -86,7 +86,9 @@ public class Scanner {
 		// add your code here
 		while (ch <= ' ') nextCh(); 
 		Token t = new Token(); t.line = line; t.col = col;
+
 		switch (ch) {
+
 			case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j': case 'k':
 			case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u':
 			case 'v': case 'w': case 'x': case 'y': case 'z': case 'A': case 'B': case 'C': case 'D': case 'E':
@@ -117,7 +119,8 @@ public class Scanner {
 				} else t.kind = assign; // or assign
 				break;
 
-			case '/': nextCh();
+			case '/':
+				nextCh();
 				if (ch == '/') {
 					do nextCh();
 					while (ch != '\n' && ch != eofCh);
@@ -192,7 +195,7 @@ public class Scanner {
 				nextCh();
 				t.kind = rbrace;
 				break;
-			case '\'':
+			case '\'': // Quotes
 				readCharCon(t);
 				break;
 			default:
@@ -208,10 +211,8 @@ public class Scanner {
 
 		int first = 0;
 		int last = names.length-1;
-
 		while(first <= last){
 			int mid = (first + last) / 2;
-
 			if(token.compareTo( names[mid] ) < 0){
 				last = mid - 1;
 			}else if (token.compareTo( names[mid] ) > 0 ){
@@ -226,29 +227,29 @@ public class Scanner {
 
 	private static void readName(Token t){
 		String name = "";
+		int i = 0 ;
 		while (Character.isLetterOrDigit(ch) || ch == '_'){ // while ch is digit or char or '_'
 			name += ch; // append char
 			nextCh(); // load new char
+			i++;
 		}
-
 		int index = searchToken(key , name);  // search through keywords to check if token is matching one of them
 		if(index >= 0){
 			t.kind = keyVal[index]; // if method returns number greater or equal to 0 token matched one of keywords
 		}else{
+			if(i >= 31){
+				Parser.error("Identifier is too long");
+			}
 			t.kind = ident; // else case its ID
 		}
-
 		t.string = name;
-
 	}
 	private static void readNumber(Token t){
 		String number = "";
-
 		while(Character.isDigit(ch)){ // while char is digit
 			number += ch; // append
 			nextCh(); // load new char
 		}
-
 		try {
 			t.val = Integer.parseInt(number); // try to convert it into integer
 		}catch (Exception e){
@@ -256,6 +257,41 @@ public class Scanner {
 		}
 
 
+	}
+
+	private static void readCharCon(Token t){
+		char res = 0;
+		nextCh(); // load new char
+		if(Character.isLetter(ch)){ // if char is letter
+			t.string = Character.toString(ch); // token string value
+			res = ch;
+		}
+
+		if(ch == '\\'){ // if it's forward slash
+			nextCh(); // load new char
+			if (ch == 'n'){ // if it's n it's new line
+				t.string = "\n";
+				res = '\n';
+			}else if(ch == 't'){ // -||- tab
+				t.string = "\t";
+				res = '\t';
+			}else if(ch == 'r'){ // -||- carriage return
+				t.string = "\r";
+				res = '\r';
+			}
+		}
+		nextCh();
+		if(ch == '\''){ // if it's closing quote
+			t.kind = charCon;
+			try {
+				t.val = res;
+			}catch (Exception e){
+				Parser.error("The entered character couldn't be affected");
+			}
+		}else {
+			t.kind = none;
+		}
+		nextCh();
 	}
 }
 
