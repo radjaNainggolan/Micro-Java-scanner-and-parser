@@ -140,14 +140,14 @@ public class Scanner {
 				nextCh();
 				if (ch == '=') {
 					nextCh();
-					t.kind = leq; // it can bee lowr or equal
+					t.kind = leq; // it can bee lower or equal
 				}else t.kind = lss; // or just lower
 				break;
 			case '>':
 				nextCh();
 				if (ch == '=') {
 					nextCh();
-					t.kind = geq; // it can be grater or equal
+					t.kind = geq; // it can be greater or equal
 				} else t.kind = gtr; // or just greater
 				break;
 			case '!':
