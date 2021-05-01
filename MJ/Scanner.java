@@ -200,7 +200,7 @@ public class Scanner {
 				break;
 			case eofCh:
 				t.kind = eof_;
-				break; // no nextCh() any more beacues it's end of file
+				break; // no nextCh() any more becaues it's end of file
 			case '+': case'-': case '*': case  ';': case ',': case '.': case'(': case ')': case '%': case '{': case '}':
 				nextCh();
 				t.kind = tokens.get(chStr);
@@ -211,8 +211,8 @@ public class Scanner {
 
 				nextCh();
 				if (ch == '/') { // it can be comment or dividing
-					nextCh();
-					while (ch != eol && ch != eofCh) nextCh();
+					do nextCh();
+					while (ch != eol && ch != eofCh);
 					nextCh();
 					t = null;
 				} else if(ch == '*'){
@@ -250,7 +250,7 @@ public class Scanner {
 				nextCh();
 				if(ch == '='){ // it can be lower or lower or equal -||-
 					nextCh();
-					chStr += '=';
+					chStr += "=";
 				}
 				t.kind = tokens.get(chStr);
 				t.string = chStr;
@@ -301,6 +301,7 @@ public class Scanner {
 		}
 
 		for(String keyword : keywords.keySet()){
+
 			if(t.string.compareTo(keyword) == 0){
 
 				if(t.string.startsWith("READ")){
@@ -366,6 +367,21 @@ public class Scanner {
 	}
 
 	private static void readCharCon(Token t){
+		nextCh();
+		t.string = "";
+
+		while(ch != '\"' && ch != '\n'){
+			t.string += Character.toString(ch);
+			nextCh();
+		}
+
+		if(ch == '\"'){
+			t.kind = stringConst_;
+		}else {
+			t.kind = none;
+			Parser.errors++;
+			Parser.error("String constant is invalid, missing \"");
+		}
 
 	}
 }
