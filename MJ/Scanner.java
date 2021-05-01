@@ -3,57 +3,151 @@
 */
 package MJ;
 import java.io.*;
+import java.util.HashMap;
 
 public class Scanner {
 	private static final char eofCh = '\u0080';
 	private static final char eol = '\n';
 	private static final int  // token codes
 		none = 0,
-		ident = 1,
-		number = 2,
-		charCon = 3,
-		plus = 4, // +
-		minus = 5, // -
-		times = 6, // *
-		slash = 7, // /
-		rem = 8 , // %
-		eql = 9, // ==
-		neq = 10, // !=
-		lss = 11 , // <
-		leq = 12, // <=
-		gtr = 13 , // >
-		geq = 14, // >=
-		assign = 15 , // =
-		semicolon = 16 , // ;
-		comma = 17 , // ,
-		period = 18, // .
-		lpar = 19 , // (
-		rpar = 20 , // )
-		lbrack = 21 , // [
-		rbrack = 22 , // ]
-		lbrace = 23 , // {
-		rbrace = 24 , // }
+		let_ = 1, //LET
+		in_ = 2, //IN
+		end_ = 3, //END
+		if_ = 4,// IF
+		fi_ = 5, //FI
+		else_ = 6,	//ELSE
+		while_ = 7,	//WHILE
+		for_ = 8, // FOR
+		then_ = 9, // THEN
+		break_ = 10, //BREAK
+		print_ = 11, //PRINT
+		readInt_ = 12, //READINT
+		readString_ = 13, // READSTRING
+		readBoolean_ = 14, // READBOOLEAN
+		readDouble_ = 15, // READDOUBLE
+		identifier_ = 16, // identifier
+		integer_ = 17, // integer
+		string_ = 18, // string
+		boolean_ = 19 , // boolean
+		double_ = 20, // double
+		plus_ = 21, //+
+		minus_ = 22, //-
+		mult_ = 23, //*
+		div_ = 24, // /
+		mod_ = 25, // %
+		less_ = 26, // <
+		leq_ = 27, // <=
+		gtr_ = 28, // >
+		geq_ = 29, // >=
+		eql_ = 30, //==
+		neq_ = 31, // !=
+		assign_ = 32, // =
+		and_ = 33, // &&
+		or_ = 34, // ||
+		not_ = 35, // !
+		semiColon_ = 36, // ;
+		comma_ = 37, // ,
+		period_ = 38, // .
+		leftPar_ = 39, // (
+		right_par = 40, // )
+		leftCurlyPar_ = 41, // {
+		rightCurlyPar_ = 42, // }
+		integerConst_ = 43, // int
+		stringConst_ = 44, // string
+		doubleConst_ = 45, // double
+		booleanConst_ = 46, // boolean
+		eof_ = 47; // end of file
 
-		// keywords
-		if_ = 25, // IF
-		else_ = 26, // ELSE
-		fi = 27, // FI
-		while_ = 28, // WHILE
-		for_ = 29,	// FOR
-		print_ = 30, // PRINT
-		let_ = 31, // LET
-		in_ = 32, // IN
-		end_ = 33, // END
-		read = 34, // READ
-		eof = 35; // end of file
+	public static HashMap<String , Integer> keywords = new HashMap<String, Integer>(); // keywords map
+	public static HashMap<String , Integer> tokens = new HashMap<String, Integer>(); // tokens map
+	public static HashMap<String , Integer> dataTypes = new HashMap<String , Integer>(); // data types map
+	public static HashMap<String , Integer> operators = new HashMap<String, Integer>(); // operators map
+
+	private static void fillKeywords(){
+		keywords.put("LET", let_);
+		keywords.put("IN", in_);
+		keywords.put("END", end_);
+		keywords.put("IF", if_);
+		keywords.put("THEN", then_);
+		keywords.put("FI", fi_);
+		keywords.put("ELSE", else_);
+		keywords.put("WHILE", while_);
+		keywords.put("FOR", for_);
+		keywords.put("BREAK", break_);
+		keywords.put("PRINT", print_);
+		keywords.put("READINT", readInt_);
+		keywords.put("READSTRING", readString_);
+		keywords.put("READBOOL", readBoolean_);
+		keywords.put("READDOUBLE", readDouble_);
+	}
+
+	private static void fillTokens(){
+		tokens.put("Identifier", identifier_);
+		tokens.put("+",plus_);
+		tokens.put("-",minus_);
+		tokens.put("*",mult_);
+		tokens.put("/",div_);
+		tokens.put("%",mod_);
+		tokens.put("<",less_);
+		tokens.put("<=",leq_);
+		tokens.put(">",gtr_);
+		tokens.put(">=",geq_);
+		tokens.put("==",eql_);
+		tokens.put("!=",neq_);
+		tokens.put("=",assign_);
+		tokens.put("&&",and_);
+		tokens.put("||",or_);
+		tokens.put("!",not_);
+		tokens.put(";",semiColon_);
+		tokens.put(",",comma_);
+		tokens.put(".",period_);
+		tokens.put("(",leftPar_);
+		tokens.put(")",right_par);
+		tokens.put("{",leftCurlyPar_);
+		tokens.put("}",rightCurlyPar_);
+	}
+
+	private static void fillDatatypes() {
+		dataTypes.put("integer", integer_);
+		dataTypes.put("string", string_);
+		dataTypes.put("bool", boolean_);
+		dataTypes.put("double", double_);
+	}
+
+	private static void fillOperators(){
+
+		operators.put("Plus", plus_);
+		operators.put("Minus", minus_);
+		operators.put("Mult", mult_);
+		operators.put("Div", div_);
+		operators.put("Mod", mod_);
+		operators.put("less", less_);
+		operators.put("LesOrEqual",less_);
+		operators.put("Greater", gtr_);
+		operators.put("GreaterOrEqual", geq_);
+		operators.put("Equal", eql_);
+		operators.put("NotEqual", neq_);
+		operators.put("And", and_);
+		operators.put("Or", or_);
+		operators.put("Assign", assign_);
+
+	}
 
 
-	private static final String key[] = { // sorted list of keywords
-		"LET", "IN", "END","FOR" ,"WHILE", "IF" , "FI" ,"PRINT", "READ"
+	public static final String tokenNames[] = {
+			"None", "LET", "IN", "END", "IF", "FI", "ELSE",
+			"WHILE", "FOR", "THEN", "BREAK", "PRINT", "READINT",
+			"READSTRING", "READBOOLEAN", "READDOUBLE", "Identifier",
+			"INTEGER", "STRING", "BOOLEAN", "DOUBLE", "PLUS", "MINUS",
+			"MULT", "DIV", "MOD", "Less", "LessOrEqual", "Greater", "GreaterOrEqual",
+			"Equal", "NotEqual", "Assign", "And", "Or", "Not", "Semicolon", "Comma",
+			"Period", "LeftParentheses", "RightParentheses", "LeftCurlyParentheses",
+			"RightCurlyParentheses", "IntegerConstant", "StringConstant", "DoubleConstant",
+			"BooleanConstant", "End of file"
 	};
-	private static final int keyVal[] = {
-		let_, in_, end_ , for_, while_, if_, fi, print_ , read
-	};
+
+
+
 
 	private static char ch;			// lookahead character
 	public  static int col;			// current column
@@ -78,6 +172,10 @@ public class Scanner {
 		in = new BufferedReader(r);
 		lex = new char[64];
 		line = 1; col = 0;
+		fillKeywords();
+		fillTokens();
+		fillDatatypes();
+		fillOperators();
 		nextCh();
 	}
 
@@ -86,7 +184,7 @@ public class Scanner {
 		// add your code here
 		while (ch <= ' ') nextCh(); 
 		Token t = new Token(); t.line = line; t.col = col;
-
+		String chStr = Character.toString(ch);
 		switch (ch) {
 
 			case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j': case 'k':
@@ -100,103 +198,82 @@ public class Scanner {
 			case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
 				readNumber(t);
 				break;
-			case ';':
-				nextCh();
-				t.kind = semicolon;
-				break;
-			case '.':
-				nextCh();
-				t.kind = period;
-				break;
 			case eofCh:
-				t.kind = eof;
+				t.kind = eof_;
 				break; // no nextCh() any more beacues it's end of file
-			case '=':
+			case '+': case'-': case '*': case  ';': case ',': case '.': case'(': case ')': case '%': case '{': case '}':
 				nextCh();
-				if (ch == '=') {
-					nextCh();
-					t.kind = eql; // it can be equality condition
-				} else t.kind = assign; // or assign
-				break;
+				t.kind = tokens.get(chStr);
+				t.string = chStr;
+				break;  //
 
 			case '/':
+
 				nextCh();
-				if (ch == '/') {
-					do nextCh();
-					while (ch != '\n' && ch != eofCh);
-					t = next(); // call scanner recursively ??? do not understand this part
-				} else t.kind = slash;
-				break;
-			case '+':
-				nextCh();
-				t.kind = plus;
-				break;
-			case '-':
-				nextCh();
-				t.kind = minus;
-				break;
-			case '*':
-				nextCh();
-				t.kind = times;
-				break;
-			case '<':
-				nextCh();
-				if (ch == '=') {
+				if (ch == '/') { // it can be comment or dividing
 					nextCh();
-					t.kind = leq; // it can bee lower or equal
-				}else t.kind = lss; // or just lower
-				break;
-			case '>':
-				nextCh();
-				if (ch == '=') {
+					while (ch != eol && ch != eofCh) nextCh();
 					nextCh();
-					t.kind = geq; // it can be greater or equal
-				} else t.kind = gtr; // or just greater
-				break;
-			case '!':
-				nextCh();
-				if (ch == '=') {
+					t = null;
+				} else if(ch == '*'){
+					char prev;
 					nextCh();
-					t.kind = neq; // not equal
-				} else{
-					t.kind = none; // or error
-					Parser.error("The entered symbol is invalid");
+
+					while (ch != eofCh && ch != '/'){
+						prev = ch;
+						nextCh();
+
+						if(ch =='/'){
+							if(prev == '*'){
+								break;
+							}else{
+								nextCh();
+							}
+							while (ch =='/') nextCh();
+						}
+					}
+
+					if(ch == eofCh){
+						t.kind = none;
+					}else{
+						nextCh();
+					}
+					t = null;
+
+				}else{
+					t.kind = div_;
+					t.string = chStr;
+
 				}
 				break;
-			case ',':
+			case '<': case '>': case '=': case '!':
 				nextCh();
-				t.kind = comma;
+				if(ch == '='){ // it can be lower or lower or equal -||-
+					nextCh();
+					chStr += '=';
+				}
+				t.kind = tokens.get(chStr);
+				t.string = chStr;
 				break;
-			case '%':
+			case '&':
+				nextCh(); // next must be & to
+				if(ch == '&'){
+					nextCh();
+					t.kind = and_;
+					t.string = "&&";
+				}else{
+					t.kind = none;
+				}
+				break;
+			case '|':
 				nextCh();
-				t.kind = rem;
-				break;
-			case '(':
-				nextCh();
-				t.kind = lpar;
-				break;
-			case ')':
-				nextCh();
-				t.kind = rpar;
-				break;
-			case '[':
-				nextCh();
-				t.kind = lbrack;
-				break;
-			case ']':
-				nextCh();
-				t.kind = rbrack;
-				break;
-			case '{':
-				nextCh();
-				t.kind = lbrace;
-				break;
-			case '}':
-				nextCh();
-				t.kind = rbrace;
-				break;
-			case '\'': // Quotes
-				readCharCon(t);
+				if(ch == '|'){ // next must be |
+					nextCh();
+					t.kind = or_;
+					t.string = "||";
+				}else{
+					t.kind = none;
+				}
 				break;
 			default:
 				nextCh();
@@ -207,91 +284,89 @@ public class Scanner {
 		return t;
 	}
 
-	private static int searchToken(String [] names , String token){
 
-		int first = 0;
-		int last = names.length-1;
-		while(first <= last){
-			int mid = (first + last) / 2;
-			if(token.compareTo( names[mid] ) < 0){
-				last = mid - 1;
-			}else if (token.compareTo( names[mid] ) > 0 ){
-				first = mid + 1;
-			}else {
-				return  mid;
-			}
-		}
-
-		return  -1;
-	}
 
 	private static void readName(Token t){
-		String name = "";
-		int i = 0 ;
-		while (Character.isLetterOrDigit(ch) || ch == '_'){ // while ch is digit or char or '_'
-			name += ch; // append char
-			nextCh(); // load new char
-			i++;
-		}
-		int index = searchToken(key , name);  // search through keywords to check if token is matching one of them
-		if(index >= 0){
-			t.kind = keyVal[index]; // if method returns number greater or equal to 0 token matched one of keywords
-		}else{
-			if(i >= 31){
-				Parser.error("Identifier is too long");
-			}
-			t.kind = ident; // else case its ID
-		}
-		t.string = name;
-	}
-	private static void readNumber(Token t){
-		String number = "";
-		while(Character.isDigit(ch)){ // while char is digit
-			number += ch; // append
-			nextCh(); // load new char
-		}
-		try {
-			t.val = Integer.parseInt(number); // try to convert it into integer
-		}catch (Exception e){
-			Parser.error(" The entered number doesn't feet int capacity"); // report error
+		t.string = Character.toString(ch);
+		nextCh();
+
+		while (Character.isLetterOrDigit(ch) || ch == '_'){
+			t.string += Character.toString(ch);
+			nextCh();
 		}
 
+		if(t.string.compareTo("true") == 0 || t.string.compareTo("false") == 0){
+			t.kind = booleanConst_;
+			return;
+		}
+
+		for(String keyword : keywords.keySet()){
+			if(t.string.compareTo(keyword) == 0){
+
+				if(t.string.startsWith("READ")){
+
+					if(ch == '('){
+						nextCh();
+						if(ch == ')'){
+							nextCh();
+							t.kind = keywords.get(keyword);
+							return;
+						}else {
+							Parser.error("READ operation exspression is invalid, missing )");
+							t.kind = none;
+							return;
+						}
+					}else {
+						Parser.error("READ operation exspression is invalid, missing (");
+						t.kind = none;
+						return;
+					}
+
+				}else{
+					t.kind = keywords.get(keyword);
+					return;
+				}
+			}
+		}
+
+		for (String type : dataTypes.keySet()){
+			if(t.string.compareTo(type) == 0){
+				t.kind = dataTypes.get(type);
+				return;
+			}
+		}
+
+		t.kind = identifier_;
+	}
+
+
+	private static void readNumber(Token t){
+		t.string = Character.toString(ch);
+		nextCh();
+		while (Character.isDigit(ch) || ch == '.' || Character.toString(ch).equalsIgnoreCase("x") || ('a' <= ch && ch <= 'f') || ('A' <= ch && ch <= 'F') || ch == '+' || ch == '-'){
+			t.string += Character.toString(ch);
+			nextCh();
+		}
+
+		if(t.string.matches("\\d+") || t.string.matches("^(0[xX])[a-fA-F\\d]+")){
+			t.kind = integerConst_;
+			if (t.string.startsWith("0X") || t.string.startsWith("0x")) {
+				t.intValue = Integer.parseInt(t.string.substring(2), 16);
+			} else {
+				t.intValue = Integer.parseInt(t.string);
+			}
+		}else if (t.string.matches("\\d+\\.\\d*([eE][+-]?\\d+)?")) {
+			t.kind = doubleConst_;
+			t.doubleValue = Double.parseDouble(t.string);
+		} else {
+			Parser.error("Number constant is invalid");
+			t.kind = none;
+		}
 
 	}
 
 	private static void readCharCon(Token t){
-		char res = 0;
-		nextCh(); // load new char
-		if(Character.isLetter(ch)){ // if char is letter
-			t.string = Character.toString(ch); // token string value
-			res = ch;
-		}
 
-		if(ch == '\\'){ // if it's forward slash
-			nextCh(); // load new char
-			if (ch == 'n'){ // if it's n it's new line
-				t.string = "\n";
-				res = '\n';
-			}else if(ch == 't'){ // -||- tab
-				t.string = "\t";
-				res = '\t';
-			}else if(ch == 'r'){ // -||- carriage return
-				t.string = "\r";
-				res = '\r';
-			}
-		}
-		nextCh();
-		if(ch == '\''){ // if it's closing quote
-			t.kind = charCon;
-			try {
-				t.val = res;
-			}catch (Exception e){
-				Parser.error("The entered character couldn't be affected");
-			}
-		}else {
-			t.kind = none;
-		}
-		nextCh();
 	}
 }
 
