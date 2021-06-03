@@ -15,7 +15,7 @@ public class TestParser {
 	// Main method of the parser tester
 	public static void main(String args[]) {
 	
-		String source = "C:\\Users\\Dell\\Desktop\\semestar6\\kompajleri_predavanja\\Domaci1 (1)\\test1.txt";
+		String source = "C:\\Users\\Dell\\Desktop\\semestar6\\kompajleri_predavanja\\Domaci1 (1)\\test2.txt";
 		System.out.println(source);
 		
 		try {

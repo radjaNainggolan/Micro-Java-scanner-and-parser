@@ -49,7 +49,7 @@ public class Scanner {
 		comma_ = 37, // ,
 		period_ = 38, // .
 		leftPar_ = 39, // (
-		right_par = 40, // )
+		rightPar_ = 40, // )
 		leftCurlyPar_ = 41, // {
 		rightCurlyPar_ = 42, // }
 		integerConst_ = 43, // int
@@ -102,7 +102,7 @@ public class Scanner {
 		tokens.put(",",comma_);
 		tokens.put(".",period_);
 		tokens.put("(",leftPar_);
-		tokens.put(")",right_par);
+		tokens.put(")",rightPar_);
 		tokens.put("{",leftCurlyPar_);
 		tokens.put("}",rightCurlyPar_);
 	}
@@ -281,6 +281,7 @@ public class Scanner {
 				Parser.error("The token is not recognized");
 				break;
 		}
+		System.out.println(t.string);
 		return t;
 	}
 
