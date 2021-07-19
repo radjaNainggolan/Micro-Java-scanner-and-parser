@@ -56,8 +56,15 @@ public class Scanner {
 		stringConst_ = 44, // string
 		doubleConst_ = 45, // double
 		booleanConst_ = 46, // boolean
-		eof_ = 47; // end of file
-
+		eof_ = 47, // end of file
+		do_ = 48,
+		quest_ = 49,
+		exp_ = 50,
+		twoDots = 51,
+		switch_ = 52,
+		case_ = 53,
+		default_ = 54,
+		sl_ = 55;
 	public static HashMap<String , Integer> keywords = new HashMap<String, Integer>(); // keywords map
 	public static HashMap<String , Integer> tokens = new HashMap<String, Integer>(); // tokens map
 	public static HashMap<String , Integer> dataTypes = new HashMap<String , Integer>(); // data types map
@@ -79,6 +86,12 @@ public class Scanner {
 		keywords.put("READSTRING", readString_);
 		keywords.put("READBOOL", readBoolean_);
 		keywords.put("READDOUBLE", readDouble_);
+		keywords.put("DO",do_);
+		keywords.put("SWITCH",switch_);
+		keywords.put("CASE",case_);
+		keywords.put("DEFAULT",default_);
+
+
 	}
 
 	private static void fillTokens(){
@@ -105,6 +118,11 @@ public class Scanner {
 		tokens.put(")",rightPar_);
 		tokens.put("{",leftCurlyPar_);
 		tokens.put("}",rightCurlyPar_);
+		tokens.put("?", quest_);
+		tokens.put("^",exp_);
+		tokens.put(":",twoDots);
+		tokens.put("SL",sl_);
+
 	}
 
 	private static void fillDatatypes() {
@@ -130,6 +148,9 @@ public class Scanner {
 		operators.put("And", and_);
 		operators.put("Or", or_);
 		operators.put("Assign", assign_);
+		operators.put("Exponent", exp_);
+
+
 
 	}
 
@@ -143,7 +164,7 @@ public class Scanner {
 			"Equal", "NotEqual", "Assign", "And", "Or", "Not", "Semicolon", "Comma",
 			"Period", "LeftParentheses", "RightParentheses", "LeftCurlyParentheses",
 			"RightCurlyParentheses", "IntegerConstant", "StringConstant", "DoubleConstant",
-			"BooleanConstant", "End of file"
+			"BooleanConstant", "End of file", "DO", "QUEST", "Exponent", "TwoDots"
 	};
 
 
@@ -201,12 +222,16 @@ public class Scanner {
 			case eofCh:
 				t.kind = eof_;
 				break; // no nextCh() any more becaues it's end of file
-			case '+': case'-': case '*': case  ';': case ',': case '.': case'(': case ')': case '%': case '{': case '}':
+			case '+': case'-': case '*': case  ';': case ',': case '.': case'(': case ')': case '%': case '{': case '}': case '^': case ':':
 				nextCh();
 				t.kind = tokens.get(chStr);
 				t.string = chStr;
 				break;  //
-
+			case '?':
+				nextCh();
+				t.kind = quest_;
+				t.string = chStr;
+				break;
 			case '/':
 
 				nextCh();
@@ -255,9 +280,14 @@ public class Scanner {
 				t.kind = tokens.get(chStr);
 				t.string = chStr;
 				break;
+//			case '^':
+//				nextCh();
+//				t.kind = exp_;
+//				t.string = "^";
+//				break;
 			case '&':
 				nextCh(); // next must be & to
-				if(ch == '&'){
+				if(ch == '&') {
 					nextCh();
 					t.kind = and_;
 					t.string = "&&";
@@ -295,6 +325,9 @@ public class Scanner {
 			t.string += Character.toString(ch);
 			nextCh();
 		}
+		/*if(t.string.equals("DO")){
+			t.kind = do_;
+		}*/
 
 		if(t.string.compareTo("true") == 0 || t.string.compareTo("false") == 0){
 			t.kind = booleanConst_;

@@ -7,9 +7,9 @@ public class Token {
 	public int kind;		// token kind
 	public int line;		// token line
 	public int col;			// token column
-	public int intValue;	// token value (for number and charConst)
-	public double doubleValue ;
-	public String string;	// token string
+	public int intValue;	// token value if int
+	public double doubleValue; // token value if double
+	public String string;	// token value if string
 }
 
 

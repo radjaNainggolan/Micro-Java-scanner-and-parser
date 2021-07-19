@@ -14,13 +14,13 @@ public class AST {
         CommandSequence commandSequence;
         @Override
         public String toString() {
-            return "{ declarations=\n" + declarations + "}"+"\n { commandSequence=" + commandSequence + "}";
+            return "{ declarations ::=\n" + declarations + "}"+"\n { commandSequence ::=" + commandSequence + "}";
         }
 
     }
 
     public static class Declarations{
-        LinkedList<Declarations> declarationsList;
+        LinkedList<Declaration> declarationsList;
 
         @Override
         public String toString() {
@@ -28,7 +28,7 @@ public class AST {
             for(int i = 0; i < declarationsList.size(); i++) {
                 text = text + " " + declarationsList.get(i).toString() + "\n";
             }
-            return "{ declarationsList=\n" + text + "}";
+            return "{ declarationsList ::=\n" + text + "}";
         }
     }
 
@@ -37,7 +37,7 @@ public class AST {
         Identifier id;
         @Override
         public String toString() {
-            return "Declaration { type=" + type + ", id=" + id + " }";
+            return "\tDeclaration { type ::=" + type + ", id ::=" + id + " }";
         }
     }
 
@@ -49,7 +49,7 @@ public class AST {
             for(int i = 0; i < commandsList.size(); i++) {
                 text = text + " " +commandsList.get(i) + "\n";
             }
-            return "\n{ commandList=\n" + text + " }";
+            return "{ commandList ::=\n"  + text  + " }\n";
         }
     }
 
@@ -57,7 +57,7 @@ public class AST {
         Command command;
         @Override
         public String toString() {
-            return "Command { command=" + command + "}";
+            return "\tCommand { command ::= " + command + "}\n";
         }
     }
 
@@ -66,7 +66,7 @@ public class AST {
         Expression expression;
         @Override
         public String toString() {
-            return "AssignCommand { id=" + id + ", expression=" + expression + " }";
+            return "\tAssignCommand { id ::=" + id + ", expression ::=" + expression + " }";
         }
     }
 
@@ -76,18 +76,66 @@ public class AST {
         CommandSequence elseCommandSequence;
         @Override
         public String toString() {
-            return "IfCommand { expression=" + expression + ", ifCommandSequence=" + ifCommandSequence
-                    + ", elseCommandSequence=" + elseCommandSequence + " }";
+            return "\tIfCommand { expression ::=" + expression + ", \n\tifCommandSequence ::=" + ifCommandSequence + ", \n\t{ elseCommandSequence ::=" + elseCommandSequence + " }\n";
         }
     }
+
+    public static class SwitchCommand extends Command{
+        Expression expression;
+        LinkedList<Case> cs;
+        @Override
+        public String toString(){
+            String text = "";
+            for(int i = 0; i < cs.size(); i++) {
+                text = text + " " +cs.get(i) + "\n";
+            }
+            return "\tSwitchCommand { Expression ::= "+ expression+ " { Cases ::=" +text + " }" +  " }\n";
+        }
+    }
+
+    public static class Case extends Command{
+        Expression expression;
+        CommandSequence cmd;
+        @Override
+        public String toString(){
+            return "\t{ Expression ::= "+ expression + "{ CommandSequence ::= "+ cmd+" }\n";
+        }
+    }
+
     public static class WhileCommand extends Command{
         Expression expression;
         CommandSequence whileCommandSequence;
         @Override
         public String toString() {
-            return "WhileCommand [expression=" + expression + ", whileCommandSequence=" + whileCommandSequence + "]";
+            return "\tWhileCommand { expression ::=" + expression + ", whileCommandSequence ::=" + whileCommandSequence + "\n" + " }";
         }
     }
+
+    public static class DoWhileCommand extends Command{
+        Expression expression1;
+        Expression expression2;
+        Expression expression3;
+        CommandSequence doWhileCommandSequence;
+        @Override
+        public String toString(){
+            return "\tDoWhileCommand { expression1 ::= "+ expression1  +" , expression2 ::= "+expression2 + " , expression3 ::= " +expression3 + " , doWhileCommandSequence ::= " + doWhileCommandSequence +"\n" +" }";
+        }
+
+    }
+
+    public static class ShiftLeft extends Expression{
+        Expression id;
+        Expression int_;
+        String operator;
+        @Override
+        public String toString(){
+            return "\tShiftLeft { Identifier ::= "+id+" , IntegerConstant ::= "+int_+" }\n";
+        }
+
+
+    }
+
+
 
     public static class ForCommand extends Command{
         Expression expression1;
@@ -96,8 +144,8 @@ public class AST {
         CommandSequence forCommandSequence;
         @Override
         public String toString() {
-            return "ForCommand { expression1=" + expression1 + ", expression2=" + expression2
-                    + ", expression3=" + expression3 + ", forCommandSequence=" + forCommandSequence + " }";
+            return "\tForCommand { expression1 ::=" + expression1 + ", expression2 ::=" + expression2
+                    + ", expression3 ::=" + expression3 + ", forCommandSequence ::=" + forCommandSequence + " }";
         }
     }
 
@@ -106,7 +154,7 @@ public class AST {
         boolean inLoop;
         @Override
         public String toString() {
-            return "BreakCommand { inLoop=" + inLoop + " }";
+            return " \tBreakCommand { inLoop ::=" + inLoop + " }";
         }
     }
 
@@ -117,16 +165,16 @@ public class AST {
         }
         @Override
         public String toString() {
-            return "ReadCommand { readType=" + readType.toString() + " }";
+            return "\tReadCommand { readType ::=" + readType.toString() + " }";
         }
 
     }
 
     public static class WriteCommand extends Command{
-        Expression printExpression;
+        Expression writeExpression;
         @Override
         public String toString() {
-            return "PrintCommand { printExpression=" + printExpression + " }";
+            return "\tPrintCommand { writeExpression ::=" + writeExpression + " }";
         }
     }
 
@@ -134,7 +182,18 @@ public class AST {
         Expression expression;
         @Override
         public String toString() {
-            return "Expression { expression=" + "expression" + " }";
+            return "(" + "expression" + ")";
+        }
+
+    }
+
+    public static class QuestOperator extends  Expression{
+        Expression questExpression;
+        Expression expression1;
+        Expression expression2;
+        @Override
+        public String toString() {
+            return " ( QuestOperator ::= { expression ::="+ questExpression + " ?" +" expression1 ::=" + expression1 + " expression2 ::= "+ expression2 +" }"+ " )";
         }
 
     }
@@ -145,8 +204,8 @@ public class AST {
         Expression expression2;
         @Override
         public String toString() {
-            return "BinaryOperatorExpression { firstExpression=" + expression1 + ", binaryOperator=" + binaryOperator
-                    + ", secondExpression=" + expression2 + " }";
+            return "(" + expression1 + " " + binaryOperator
+                    + " " + expression2 + " )";
         }
 
     }
@@ -156,7 +215,7 @@ public class AST {
         Expression expression;
         @Override
         public String toString() {
-            return "UnaryOperatorExpression  { unaryOperator=" + unaryOperator + ", expression=" + expression + " }";
+            return "UnaryOperatorExpression  { unaryOperator ::=" + unaryOperator + ", expression ::=" + expression + " }";
         }
 
     }
@@ -168,7 +227,7 @@ public class AST {
         }
         @Override
         public String toString() {
-            return "ReadExpression { readType=" + readType.toString() + " }";
+            return "ReadExpression { readType ::=" + readType.toString() + " }";
         }
     }
 
@@ -179,7 +238,7 @@ public class AST {
         }
         @Override
         public String toString() {
-            return "Constant { constType=" + constType.toString() + " }";
+            return "Constant" ;//+// constType.toString() + " }";
         }
     }
 
@@ -190,7 +249,7 @@ public class AST {
         }
         @Override
         public String toString() {
-            return "{ type=" + type + " }";
+            return "{ type ::=" + type + " }";
         }
 
     }
@@ -202,7 +261,7 @@ public class AST {
         }
         @Override
         public String toString() {
-            return "{ name=" + name + " }";
+            return "{ name ::=" + name + " }";
         }
 
 
